@@ -2,19 +2,26 @@ import { InMemoryNotificationsRepository } from '@test/repositories/in-memory-no
 import { NotificationNotFound } from './errors/notification-not-found-error';
 import { makeNotification } from '@test/factories/notification-factory';
 import { UnreadNotification } from './unread-notification-service';
+import { Notification } from '@app/entities/notification/notification';
+
+let notificationsRepository: InMemoryNotificationsRepository;
+let sut: UnreadNotification;
+let notification: Notification;
 
 describe('Unread notification', () => {
-  it('should be able to unread a notification', async () => {
-    const notificationsRepository = new InMemoryNotificationsRepository();
-    const unreadNotification = new UnreadNotification(notificationsRepository);
+  beforeEach(() => {
+    notificationsRepository = new InMemoryNotificationsRepository();
+    sut = new UnreadNotification(notificationsRepository);
 
-    const notification = makeNotification({
+    notification = makeNotification({
       readAt: new Date(),
     });
 
     notificationsRepository.create(notification);
+  });
 
-    await unreadNotification.execute({
+  it('should be able to unread a notification', async () => {
+    await sut.execute({
       notificationId: notification.id,
     });
 
@@ -22,11 +29,8 @@ describe('Unread notification', () => {
   });
 
   it('should not be able to unread a non existing notification', async () => {
-    const notificationsRepository = new InMemoryNotificationsRepository();
-    const unreadNotification = new UnreadNotification(notificationsRepository);
-
     await expect(() => {
-      return unreadNotification.execute({
+      return sut.execute({
         notificationId: 'fake-notification-id',
       });
     }).rejects.toThrow(NotificationNotFound);

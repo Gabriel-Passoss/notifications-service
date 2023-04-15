@@ -2,17 +2,24 @@ import { InMemoryNotificationsRepository } from '@test/repositories/in-memory-no
 import { NotificationNotFound } from './errors/notification-not-found-error';
 import { makeNotification } from '@test/factories/notification-factory';
 import { ReadNotification } from './read-notification-service';
+import { Notification } from '@app/entities/notification/notification';
+
+let notificationsRepository: InMemoryNotificationsRepository;
+let sut: ReadNotification;
+let notification: Notification;
 
 describe('Read notification', () => {
-  it('should be able to read a notification', async () => {
-    const notificationsRepository = new InMemoryNotificationsRepository();
-    const readNotification = new ReadNotification(notificationsRepository);
+  beforeEach(() => {
+    notificationsRepository = new InMemoryNotificationsRepository();
+    sut = new ReadNotification(notificationsRepository);
 
-    const notification = makeNotification();
+    notification = makeNotification();
 
     notificationsRepository.create(notification);
+  });
 
-    await readNotification.execute({
+  it('should be able to read a notification', async () => {
+    await sut.execute({
       notificationId: notification.id,
     });
 
@@ -22,11 +29,8 @@ describe('Read notification', () => {
   });
 
   it('should not be able to read a non existing notification', async () => {
-    const notificationsRepository = new InMemoryNotificationsRepository();
-    const readNotification = new ReadNotification(notificationsRepository);
-
     await expect(() => {
-      return readNotification.execute({
+      return sut.execute({
         notificationId: 'fake-notification-id',
       });
     }).rejects.toThrow(NotificationNotFound);
