@@ -1,6 +1,6 @@
 import { InMemoryNotificationsRepository } from '@test/repositories/in-memory-notifications-repository';
 import { makeNotification } from '@test/factories/notification-factory';
-import { GetRecipientNotifications } from './get-recipient-notifications';
+import { GetRecipientNotifications } from './get-recipient-notifications-service';
 
 describe('Get recipient notifications', () => {
   it('should be able to get recipient notifications', async () => {

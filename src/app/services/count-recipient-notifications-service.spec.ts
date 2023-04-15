@@ -1,5 +1,5 @@
 import { InMemoryNotificationsRepository } from '@test/repositories/in-memory-notifications-repository';
-import { CountRecipientNotifications } from './count-recipient-notifications';
+import { CountRecipientNotifications } from './count-recipient-notifications-service';
 import { makeNotification } from '@test/factories/notification-factory';
 
 describe('Count recipient notifications', () => {
